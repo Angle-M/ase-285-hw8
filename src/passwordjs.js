@@ -36,12 +36,3 @@ rl.question('Enter an Email: ', (email) =>{
         rl.close();
     });
 });
-/*
-sm.cho@hello.com:123456
-john.deacon@good.com:bestpassword
-alan.may@best.com:mypassword
-henry.taylor@edu.com:educatorbest
- */
-
-
-

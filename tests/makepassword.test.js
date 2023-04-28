@@ -1,6 +1,6 @@
 const fs = require('fs');
 const crypto = require('crypto');
-const { makepassword } = ('./src/makepassword');
+const makepassword = ('./src/makepassword');
 
 describe('makepassword', () => {
   const password_file = 'password.txt';
