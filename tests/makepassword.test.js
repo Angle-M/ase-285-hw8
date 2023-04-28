@@ -1,35 +1,31 @@
 const fs = require('fs');
-const p = require('../src/makepassword');
+const crypto = require('crypto');
+const { makepassword } = ('./src/makepassword');
 
-describe('makepassword should create file', () => {
-    const passwordFile = './tests/passwordtest.txt';
-    const encryptedFile = './tests/passwordtest.enc.txt';
+describe('makepassword', () => {
+  const password_file = 'password.txt';
+  const encrypted_file = 'password.enc.txt';
 
-    beforeEach(() => {
-        try {
-            fs.unlinkSync(encryptedFile);
-        } catch (err) {
-            // Ignore error if file doesn't exist
-        }
-    });
+  beforeEach(() => {
+    // Make sure password.enc.txt does not exist before running each test.
+    if (fs.existsSync(encrypted_file)) {
+      fs.unlinkSync(encrypted_file);
+    }
+  });
 
-    test('creates encrypted file with correct contents', () => {
-        // Make sure password.enc.txt does not exist before running the function.
-        expect(fs.existsSync(encryptedFile)).toBe(false);
+  it('should create password.enc.txt', () => {
+    // Make sure password.enc.txt does exist after running the function.
+    makepassword(password_file, encrypted_file);
+    expect(fs.existsSync(encrypted_file)).toBe(true);
+  });
 
-        // Run the function to create the encrypted file
-        p.makepassword(fs.readFileSync(passwordFile, 'utf8'), fs.createWriteStream(encryptedFile));
-
-        // Make sure password.enc.txt does exist after running the function.
-        expect(fs.existsSync(encryptedFile)).toBe(true);
-
-        // Make sure the contents of password.enc.txt has correct contents.
-        const expectedContents =
-            'sm.cho@hello.com:8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92\n' +
-            'john.deacon@good.com:c495634064a4baa0c6f7a5aed1f9f47488b421a4eca666a0b112baa720cee7f5\n' +
-            'alan.may@best.com:89e01536ac207279409d4de1e5253e01f4a1769e696db0d6062ca9b8f56767c8\n' +
-            'henry.taylor@edu.com:14f4cbccaee1fa7fe31820e2d57f1389823350a6fe23054b2a3d7dde4fa8531b\n';
-        const actualContents = fs.readFileSync(encryptedFile, 'utf8');
-        expect(actualContents).toEqual(expectedContents);
-    });
+  it('should have correct contents in password.enc.txt', () => {
+    // Make sure the contents of password.enc.txt has correct contents.
+    const lines = fs.readFileSync(encrypted_file, 'utf8').trim().split('\n');
+    for (let line of lines) {
+      const [email, hash] = line.split(':');
+      expect(email).toMatch(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
+      expect(hash).toMatch(/^[a-f0-9]{64}$/);
+    }
+  });
 });

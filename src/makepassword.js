@@ -1,5 +1,3 @@
-const fs = require('fs');
-const crypto = require('crypto');
 const util = require('./utility')
 const {hash, readFile, writeFile} = require("./utility");
 
